@@ -89,11 +89,11 @@
 // A $( document ).ready() block.
 $( document ).ready(function() {
     console.log( "ready!" );
-    var ctx = $('#myChart');
+    myChart.ctx = $('#myChart');
 
-    App.log("hello, got my chart " +ctx);
-    App.getToken();
-    myChart.initChart(ctx);
+    App.log("hello, got my chart " +myChart.ctx);
+    App.getToken(App.getWFJobs);    
+    //myChart.initChart(ctx);
 });
 	</script>
 </body>
