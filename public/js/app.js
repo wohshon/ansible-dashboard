@@ -81,23 +81,21 @@ var myChart = {
         var results = inputData.results;
         let statusResult = results.map(a => a.status);
         console.log(statusResult);
-
-        //console.log(statusResult.filter(x => x === 'failed').length);  // -> 3
-
-        const distinctStatus=[...new Set(statusResult)];
+        const distinctStatus=[...new Set(statusResult)]; // labels
         
         console.log(distinctStatus);
-        var countArray=[];
+        var countArray=[]; // data for chart
         var i=0;
         distinctStatus.forEach(function (item) {
             countArray[i]=statusResult.filter(x => x === item).length;
             i++;
         });
         console.log(countArray);
-        console.log(this.data.datasets[0].data);
+        //console.log(this.data.datasets[0].data);
         //console.log(this.data.labels);
         this.data.datasets[0].data=countArray;
         this.data.labels=distinctStatus;
+        this.data.datasets[0].backgroundColor=myChart.getBackgroundColor(distinctStatus.length);
         console.log(this.data.datasets[0].data);
         //status
         console.log('calling callback');
@@ -175,5 +173,17 @@ var myChart = {
               }            
           });        
       },
-      ctx: null
+      ctx: null,
+      getBackgroundColor: function(size) {
+        var bgColorArray = [
+            [],
+            ["rgb(255, 99, 132)"],
+            ["rgb(255, 99, 132)","rgb(54, 162, 235)"],
+            ["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)"],
+            ["rgb(255, 99, 132)","rgb(54, 162, 235)","rgb(255, 205, 86)","rgb(150, 105, 86)"]
+        ];
+
+        return bgColorArray[size];
+
+      }
 } ;

@@ -52,6 +52,7 @@ router.post('/wfjobs', function(req, res, next) {
       function (error, response, body) {
         console.log(body);
         var x=JSON.parse(body);
+        writetoES(x);
         res.status(200).send(x);
   
       }  
@@ -59,5 +60,43 @@ router.post('/wfjobs', function(req, res, next) {
     );  
 //    res.status(200).send({result:"123"});
 });
+const { Client } = require('elasticsearch');
+const client = new Client({ hosts:['http://192.168.0.110:9200'] })
 
+function writetoES(data) {
+  //only get the jobs array
+  jobs = data.results;
+
+  console.log(jobs);
+  //bulk?
+    jobs.forEach(element => {
+      async function run () {
+        await client.index({
+        index: "ansible-wfjobs",
+        type: "_doc",
+        id: element.id,
+        body: {
+          workflow_job_template: element.workflow_job_template,
+          status: element.status,
+          name: element.name,
+          launch_type: element.launch_type,
+          id: element.id,
+          type: element.type,
+          finished: element.finished,
+          related: {
+            workflow_nodes: element.related.workflow_nodes,
+            created_by: element.related.created_by,
+            modified_by: element.related.modified_by
+          },
+          summary_fields: {
+            inventory: element.summary_fields.inventory
+          }
+        }
+      })
+      await client.indices.refresh({ index: 'ansible-wfjobs' })
+
+    }
+    run().catch(console.log); 
+  });
+}
 module.exports = router;
